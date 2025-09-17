@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hanna Smile Portfolio</title>
+    <style>
+      :root {
+        --bg: #0b0d10;
+        --card: #151922;
+        --muted: #9aa3b2;
+        --text: #e8eef9;
+        --accent: #6aa7ff;
+        --ring: rgba(106, 167, 255, 0.35);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+
+      body {
+        margin: 0;
+        background: linear-gradient(180deg, #0b0d10, #0f131a 40%, #0b0d10);
+        color: var(--text);
+        font: 500 16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu,
+          "Helvetica Neue", Arial;
+      }
+
+      header {
+        top: 0;
+        backdrop-filter: saturate(140%) blur(8px);
+        background: rgba(11, 13, 16, 0.6);
+        border-bottom: 1px solid #1f2633;
+      }
+
+      .container {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 28px 20px;
+      }
+
+      h1 {
+        font-size: clamp(24px, 3vw, 34px);
+        margin: 0;
+      }
+
+      header p {
+        margin: 6px 0 0;
+        color: var(--muted);
+      }
+
+      .controls {
+        display: flex;
+        gap: 10px;
+        margin-top: 16px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 18px;
+        padding: 26px 0;
+      }
+
+      .folder {
+        background: linear-gradient(180deg, #0e1220, #0c1018);
+        border: 1px solid #1f2633;
+        border-radius: 18px;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25),
+          inset 0 1px 0 rgba(255, 255, 255, 0.02);
+        overflow: hidden;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .folder:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35),
+          0 0 0 1px rgba(106, 167, 255, 0.1) inset;
+      }
+
+      .folder-header {
+        padding: 16px 16px 8px;
+      }
+
+      .folder-header h2 {
+        margin: 0;
+        font-size: 18px;
+      }
+
+      .folder-header p {
+        margin: 6px 0 0;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .images {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 14px;
+      }
+
+      .thumb {
+        position: relative;
+        cursor: zoom-in;
+        border-radius: 12px;
+        overflow: hidden;
+        aspect-ratio: 4 / 3;
+        flex: 1 1 calc(50% - 10px);
+        background: #0a0d13;
+      }
+
+      .thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: transform 0.25s ease, filter 0.25s ease;
+      }
+
+      .thumb:after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+      }
+
+      .thumb:hover img {
+        transform: scale(1.04);
+        filter: brightness(1.05);
+      }
+
+      /* Lightbox */
+      #lightbox {
+        position: fixed;
+        inset: 0;
+        display: none;
+        place-items: center;
+        background: rgba(8, 10, 14, 0.82);
+        backdrop-filter: blur(6px);
+        z-index: 1000;
+      }
+
+      #lightbox.active {
+        display: grid;
+      }
+
+      .lb-inner {
+        position: relative;
+        width: min(96vw, 1600px);
+        max-height: 88vh;
+        background: linear-gradient(180deg, #0e1220, #0c1018);
+        border: 1px solid #1f2633;
+        border-radius: 10px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55),
+          0 0 0 1px rgba(106, 167, 255, 0.12) inset;
+        overflow: hidden;
+      }
+
+      .lb-media {
+        position: relative;
+        padding: 10px 10px 0;
+      }
+
+      .lb-media img {
+        display: block;
+        width: 100%;
+        max-height: 64vh;
+        object-fit: contain;
+        border-radius: 14px;
+        background: #0a0d13;
+      }
+
+      .lb-meta {
+        display: flex;
+        justify-content: space-between;
+        gap: 14px;
+        align-items: flex-start;
+        padding: 14px 16px 16px;
+      }
+
+      .lb-text {
+        min-width: 0;
+      }
+
+      .lb-title {
+        margin: 0 0 4px;
+        font-size: 18px;
+      }
+
+      .lb-desc {
+        margin: 0;
+        color: var(--muted);
+        font-size: 14px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .lb-controls {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0 auto;
+        justify-content: center;
+      }
+
+      .btn {
+        appearance: none;
+        border: 1px solid #223047;
+        background: #121826;
+        color: var(--text);
+        padding: 10px 12px;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: transform 0.15s ease, background 0.15s ease,
+          border-color 0.15s ease;
+      }
+
+      .btn:hover {
+        background: #182132;
+        border-color: #2a3a56;
+      }
+
+      .btn:active {
+        transform: translateY(1px);
+      }
+
+      .icon {
+        display: inline-block;
+        line-height: 0;
+        font-size: 0;
+      }
+
+      .nav {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+      }
+
+      .nav button {
+        pointer-events: auto;
+        position: absolute;
+        top: 50%;
+        margin-top: -18px;
+
+        width: 36px;
+        height: 36px;
+        padding: 0;
+
+        display: grid;
+        place-items: center;
+
+        border-radius: 8px;
+        border: 1px solid #223047;
+
+        background: rgba(18, 24, 38, 0.6);
+        backdrop-filter: saturate(140%) blur(4px);
+
+        color: var(--text);
+        font-size: 18px;
+        font-weight: 700;
+        cursor: pointer;
+
+        box-shadow:
+          0 4px 12px rgba(0, 0, 0, 0.30),
+          0 0 0 1px rgba(106, 167, 255, 0.08) inset;
+      }
+
+      .nav button:hover {
+        background: rgba(24, 33, 50, 0.85);
+        border-color: #2a3a56;
+      }
+
+      .nav button:focus-visible {
+        outline: none;
+        box-shadow:
+          0 0 0 2px var(--ring),
+          0 0 0 1px #2a3a56 inset;
+      }
+
+      .nav .prev {
+        left: 14px;
+      }
+
+      .nav .next {
+        right: 14px;
+      }
+
+      @media (max-width: 540px) {
+        .lb-meta {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .lb-inner {
+          width: 100vw;
+        }        
+      }
+
+      /* Make first image full width; keep others as 1/2 width */
+      .images .thumb:first-child {
+        flex: 1 0 100%; aspect-ratio: 16/9;
+      }
+
+      /* Hide everything after the first 3 thumbnails (still in DOM for lightbox) */
+      .images .thumb:nth-child(n+4) {
+        display: none;
+      }
+
+      /* Position for the "+N more" button */
+      .images {
+        position: relative;
+      }
+
+      .more {
+        position: absolute;
+        right: 18px;
+        bottom: 18px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        border: 1px solid #223047;
+        background: #121826;
+        color: var(--text);
+        cursor: pointer;
+      }
+
+      .more:hover {
+        background:#182132; border-color:#2a3a56;
+      }
+
+      .lb-strip {
+        display: flex;
+        gap: 0px;
+        padding: 10px 0;
+        overflow: auto;
+        border-top: 1px solid #1f2633;
+        background: linear-gradient(180deg, #0e1220, #0c1018);
+      }
+      .lb-strip::-webkit-scrollbar { height: 8px; }
+      .lb-strip img {
+        width: 72px;
+        height: 54px;
+        object-fit: cover;
+        border-radius: 8px;
+        display: block;
+        background: #0a0d13;
+      }
+      .lb-strip .it {
+        appearance: none;
+        border: 1px solid #223047;
+        background: #121826;
+        padding: 3px;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: transform .15s ease, border-color .15s ease;
+      }
+      .lb-strip .it {
+        background: #101622;
+      }
+
+      .lb-strip .it img {
+        opacity: .55;
+        filter: brightness(.7) saturate(.8);
+        transition: opacity .2s ease, filter .2s ease, transform .15s ease;
+      }
+
+      .lb-strip .it:hover img {
+        opacity: .85;
+        filter: brightness(.9) saturate(.95);
+      }
+
+      .lb-strip .it.current {
+        background: #141b2a;
+        box-shadow: 
+          0 0 0 2px var(--ring) inset,
+          0 0 0 1px #2a3a56 inset;
+        border-color: #2a3a56;
+      }
+
+      .lb-strip .it.current img {
+        opacity: 1;
+        filter: none;
+      }
+
+      .lb-strip .it:hover {
+        transform: translateY(-1px);
+        border-color: #2a3a56;
+      }
+
+      .lb-strip .it.current {
+        box-shadow: 0 0 0 2px var(--ring) inset;
+        border-color: #2a3a56;
+      }
+      .lb-strip{
+        scroll-behavior:smooth;
+      }
+
+      /* Close button (smaller version) */
+      #btnClose {
+        position: absolute;
+        top: 12px;
+        right: 10px;
+
+        width: 32px;
+        height: 32px;
+        padding: 0;
+
+        display: grid;
+        place-items: center;
+
+        border-radius: 8px;
+        border: 1px solid #223047;
+
+        background: rgba(18, 24, 38, 0.6);
+        backdrop-filter: saturate(140%) blur(4px);
+
+        color: var(--text);
+
+        box-shadow: 
+          0 4px 12px rgba(0, 0, 0, 0.3),
+          0 0 0 1px rgba(106, 167, 255, 0.08) inset;
+
+        z-index: 2;
+      }
+
+      #btnClose:hover {
+        background: rgba(24, 33, 50, 0.85);
+        border-color: #2a3a56;
+      }
+
+      #btnClose:active {
+        transform: translateY(1px);
+      }
+
+      #btnClose:focus-visible {
+        outline: none;
+        box-shadow: 
+          0 0 0 2px var(--ring),
+          0 0 0 1px #2a3a56 inset;
+      }
+
+      #btnClose .icon {
+        font-size: 14px;
+        line-height: 1;
+      }
+
+      @media (max-width: 740px) {
+        .nav {
+          display: none;
+        }        
+      }
+
+      #lightbox {
+        overscroll-behavior: contain;
+      }
+
+      .lb-media,
+      .lb-inner {
+        touch-action: pan-y;
+      }
+
+      body.no-scroll {
+        position: fixed;
+        overflow: hidden;
+        width: 100%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <div class="container">
+        <h1>Hanna Smile Portfolio</h1>
+        <p>Curated collections from my work</p>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="grid" id="gallery">
+        <!-- Folder A -->
+        <article class="folder" data-folder-title="Day Quotes" data-folder-desc="Beautiful landscapes captured during my travels.">
+          <div class="folder-header">
+            <h2>Day Quotes</h2>
+            <p>Beautiful landscapes captured during my travels.</p>
+          </div>
+
+          <div class="images">
+            <a class="thumb"><img src="portfolio/quotes/01.png" /></a>
+            <a class="thumb"><img src="portfolio/quotes/02.png" /></a>
+            <a class="thumb"><img src="portfolio/quotes/03.png" /></a>
+            <a class="thumb"><img src="portfolio/quotes/04.png" /></a>
+            <a class="thumb"><img src="portfolio/quotes/05.png" /></a>
+            <a class="thumb"><img src="portfolio/quotes/06.png" /></a>
+            <a class="thumb"><img src="portfolio/quotes/07.png" /></a>
+            <a class="thumb"><img src="portfolio/quotes/08.png" /></a>
+            <a class="thumb"><img src="portfolio/quotes/09.png" /></a>
+            <a class="thumb"><img src="portfolio/quotes/10.png" /></a>
+            <a class="thumb"><img src="portfolio/quotes/11.png" /></a>
+          </div>
+        </article>
+
+        <!-- Folder B -->
+        <article class="folder" data-folder-title="Telegram" data-folder-desc="People, moods, and expressions.">
+          <div class="folder-header">
+            <h2>Telegram</h2>
+            <p>People, moods, and expressions.</p>
+          </div>
+
+          <div class="images">
+            <a class="thumb"><img src="portfolio/telegram/01.png" /></a>
+            <a class="thumb"><img src="portfolio/telegram/02.png" /></a>
+            <a class="thumb"><img src="portfolio/telegram/03.png" /></a>
+            <a class="thumb"><img src="portfolio/telegram/04.png" /></a>
+            <a class="thumb"><img src="portfolio/telegram/05.png" /></a>
+            <a class="thumb"><img src="portfolio/telegram/06.png" /></a>
+            <a class="thumb"><img src="portfolio/telegram/07.png" /></a>
+            <a class="thumb"><img src="portfolio/telegram/08.png" /></a>
+            <a class="thumb"><img src="portfolio/telegram/09.png" /></a>
+            <a class="thumb"><img src="portfolio/telegram/10.png" /></a>
+            <a class="thumb"><img src="portfolio/telegram/11.png" /></a>
+            <a class="thumb"><img src="portfolio/telegram/12.png" /></a>
+            <a class="thumb"><img src="portfolio/telegram/13.png" /></a>
+            <a class="thumb"><img src="portfolio/telegram/14.png" /></a>
+            <a class="thumb"><img src="portfolio/telegram/15.png" /></a>
+            <a class="thumb"><img src="portfolio/telegram/16.png" /></a>
+            <a class="thumb"><img src="portfolio/telegram/17.png" /></a>
+            <a class="thumb"><img src="portfolio/telegram/18.png" /></a>
+          </div>
+        </article>
+
+        <article class="folder" data-folder-title="Twitter" data-folder-desc="People, moods, and expressions.">
+          <div class="folder-header">
+            <h2>Twitter</h2>
+            <p>Shapes, texture, and color studies.</p>
+          </div>
+
+          <div class="images">
+            <a class="thumb"><img src="portfolio/twitter/01.png" /></a>
+            <a class="thumb"><img src="portfolio/twitter/02.png" /></a>
+            <a class="thumb"><img src="portfolio/twitter/03.png" /></a>
+          </div>
+        </article>
+
+        <article class="folder" data-folder-title="Certificates" data-folder-desc="People, moods, and expressions.">
+          <div class="folder-header">
+            <h2>Certificates</h2>
+            <p>Shapes, texture, and color studies.</p>
+          </div>
+
+          <div class="images">
+            <a class="thumb"><img src="portfolio/certificates/01.png" /></a>
+            <a class="thumb"><img src="portfolio/certificates/02.png" /></a>
+            <a class="thumb"><img src="portfolio/certificates/03.png" /></a>
+          </div>
+        </article>        
+      </section>
+    </main>
+
+    <!-- Lightbox -->
+    <div id="lightbox" aria-modal="true" role="dialog" aria-hidden="true">
+      <div class="lb-inner">
+        <button class="btn close" id="btnClose" aria-label="Close">
+          <span class="icon">✕</span>
+        </button>
+
+        <div class="lb-meta">
+          <div class="lb-text">
+            <h3 class="lb-title" id="lbTitle"></h3>
+            <p class="lb-desc" id="lbDesc"></p>
+          </div>
+        </div>
+
+        <div class="lb-media">
+          <img id="lbImg" alt="" />
+        </div>
+
+        <div class="nav">
+          <button class="prev btn" id="btnPrev" aria-label="Previous">&lt;</button>
+          <button class="next btn" id="btnNext" aria-label="Next">&gt;</button>
+        </div>
+
+        <div class="lb-strip" id="lbStrip"></div>        
+      </div>
+    </div>
+
+    <script>
+      // Build a flat list of images with folder metadata
+      const thumbs = [...document.querySelectorAll(".folder")].flatMap((f) =>
+        [...f.querySelectorAll(".thumb img")].map((img) => ({
+          src: img.src,
+          alt: img.alt,
+          folder: f,
+          ft: f.dataset.folderTitle,
+          fd: f.dataset.folderDesc,
+        }))
+      );
+
+      let idx = -1;
+
+      const lb = document.getElementById("lightbox"),
+        img = document.getElementById("lbImg"),
+        t = document.getElementById("lbTitle"),
+        d = document.getElementById("lbDesc"),
+        prev = () => go(idx - 1),
+        next = () => go(idx + 1);
+
+        function openAt(i) {
+          if (i < 0 || i >= thumbs.length) {
+            return;
+          }
+
+          idx = i;
+          const it = thumbs[idx];
+
+          img.src = it.src;
+          img.alt = it.alt || "";
+          t.textContent = it.ft || "";
+          d.textContent = it.fd || "";
+
+          lb.classList.add("active");
+          lb.setAttribute("aria-hidden", "false");
+
+          history.pushState({ lb: true, index: idx }, "", "#");
+
+          [...strip.children].forEach((b, j) => {
+            b.classList.toggle("current", j === idx);
+          });
+
+          focusThumb();
+        }
+
+
+        function go(i) {
+          if (thumbs.length === 0) {
+            return;
+          }
+
+          idx = (i + thumbs.length) % thumbs.length;
+          const it = thumbs[idx];
+
+          img.src = it.src;
+          img.alt = it.alt || "";
+          t.textContent = it.ft || "";
+          d.textContent = it.fd || "";
+
+          [...strip.children].forEach((b, j) => {
+            b.classList.toggle("current", j === idx);
+          });
+
+          focusThumb();
+        }
+
+
+
+        function closeLb() {
+          lb.classList.remove("active");
+          lb.setAttribute("aria-hidden", "true");
+          img.src = "";
+          if (location.hash === "#") {
+            history.back();
+          }
+        }
+
+        document.getElementById("btnPrev").onclick = prev;
+        document.getElementById("btnNext").onclick = next;
+        document.getElementById("btnClose").onclick = closeLb;
+
+        lb.addEventListener("click", (e) => {
+          if (e.target === lb) {
+            closeLb();
+          }
+        });
+
+        addEventListener("keydown", (e) => {
+          if (!lb.classList.contains("active")) {
+            return;
+          }
+          if (e.key === "Escape") {
+            closeLb();
+          } else if (e.key === "ArrowLeft") {
+            prev();
+          } else if (e.key === "ArrowRight") {
+            next();
+          }
+        });
+
+        history.pushState?.({ lb: true, index: idx }, "", "#");
+
+        const allThumbEls=[...document.querySelectorAll(".thumb")]; allThumbEls.forEach((a,i)=>a.addEventListener("click",(e)=>{e.preventDefault();openAt(i);}));
+        document.querySelectorAll(".folder").forEach(f=>{
+          const imgs=[...f.querySelectorAll(".thumb")], extra=Math.max(0,imgs.length-3);
+          if(extra>0){
+            const btn=document.createElement("button");
+            btn.className="more";
+            btn.type="button";
+            btn.textContent=`+${extra} more`;
+            f.querySelector(".images").appendChild(btn);
+            btn.addEventListener("click",()=>{
+              const firstHidden=imgs[3];
+              if(!firstHidden) return;
+              const gi=allThumbEls.indexOf(firstHidden);
+              if(gi>-1) openAt(gi);
+            });
+          }
+        });
+
+        addEventListener("popstate", (e) => {
+          if (!e.state || !e.state.lb) {
+            closeLb();
+          }
+        });
+
+
+        const strip = document.getElementById("lbStrip");
+
+        function renderStrip(sel = -1) {
+          strip.innerHTML = thumbs.map((it, i) =>
+            `<button class="it${i===sel ? ' current' : ''}" data-i="${i}" title="${it.alt || it.ft || ''}">
+               <img src="${it.src}" alt="">
+             </button>`
+          ).join('');
+        }
+        renderStrip();
+
+        strip.addEventListener("click", (e) => {
+          const b = e.target.closest(".it");
+          if (b) { openAt(parseInt(b.dataset.i, 10)); }
+        });
+
+        function focusThumb() {
+          const b = strip.children[idx];
+          if (!b) {
+            return;
+          }
+          b.scrollIntoView({
+            block: "nearest",
+            inline: "center",
+            behavior: "smooth"
+          });
+        }
+
+        const media = document.querySelector(".lb-media");
+        let startX = 0;
+        let startY = 0;
+        let deltaX = 0;
+        let deltaY = 0;
+        let touching = false;
+        const THRESHOLD = 40; // min distance in px
+
+        media.addEventListener("touchstart", e => {
+          if (!lb.classList.contains("active")) {
+            return;
+          }
+
+          const t = e.changedTouches[0];
+          startX = t.clientX;
+          startY = t.clientY;
+          deltaX = 0;
+          deltaY = 0;
+          touching = true;
+        }, { passive: true });
+
+        media.addEventListener("touchmove", e => {
+          if (!touching) {
+            return;
+          }
+
+          const t = e.changedTouches[0];
+          deltaX = t.clientX - startX;
+          deltaY = t.clientY - startY;
+        }, { passive: true });
+
+        media.addEventListener("touchend", e => {
+          if (!touching) {
+            return;
+          }
+
+          touching = false;
+
+          // horizontal swipe detection
+          if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > THRESHOLD) {
+            if (deltaX < 0) {
+              next(); // swipe left → next
+            } else {
+              prev(); // swipe right → prev
+            }
+          }
+
+          deltaX = 0;
+          deltaY = 0;
+        }, { passive: true });
+    </script>
+  </body>
+</html>
