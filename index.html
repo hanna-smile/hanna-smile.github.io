@@ -892,6 +892,7 @@
         renderStrip(cFolder, cIndex); // rebuild only if folder changed; otherwise just update selection
 
         lb.classList.add("active");
+        document.body.classList.add("no-scroll");        
         lb.setAttribute("aria-hidden", "false");
         history.pushState({ lb: true, fi: cFolder, ii: cIndex }, "", location.pathname + location.search);
 
@@ -939,6 +940,7 @@
       function closeLb() {
         lb.classList.remove("active");
         lb.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("no-scroll");        
         img.src = "";
         history.replaceState({ lb: false }, "", location.pathname + location.search);
       }
