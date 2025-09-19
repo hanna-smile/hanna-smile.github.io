@@ -484,8 +484,7 @@
 
     <main class="container">
       <section class="grid" id="gallery">
-        <!-- Folder A -->
-        <article class="folder" data-folder-title="Day Quotes" data-folder-desc="Beautiful landscapes captured during my travels.">
+        <article class="folder">
           <div class="folder-header">
             <h2>Day Quotes</h2>
             <p>Beautiful landscapes captured during my travels.</p>
@@ -506,8 +505,7 @@
           </div>
         </article>
 
-        <!-- Folder B -->
-        <article class="folder" data-folder-title="Telegram" data-folder-desc="People, moods, and expressions.">
+        <article class="folder">
           <div class="folder-header">
             <h2>Telegram</h2>
             <p>People, moods, and expressions.</p>
@@ -535,7 +533,7 @@
           </div>
         </article>
 
-        <article class="folder" data-folder-title="Twitter" data-folder-desc="People, moods, and expressions.">
+        <article class="folder">
           <div class="folder-header">
             <h2>Twitter</h2>
             <p>Shapes, texture, and color studies.</p>
@@ -548,7 +546,7 @@
           </div>
         </article>
 
-        <article class="folder" data-folder-title="Certificates" data-folder-desc="People, moods, and expressions.">
+        <article class="folder">
           <div class="folder-header">
             <h2>Certificates</h2>
             <p>Shapes, texture, and color studies.</p>
@@ -561,7 +559,7 @@
           </div>
         </article>
 
-        <article class="folder" data-folder-title="English Club" data-folder-desc="People, moods, and expressions.">
+        <article class="folder">
           <div class="folder-header">
             <h2>English Club</h2>
             <p>Shapes, texture, and color studies.</p>
@@ -581,7 +579,7 @@
           </div>
         </article>
 
-        <article class="folder" data-folder-title="Google Sheets" data-folder-desc="People, moods, and expressions.">
+        <article class="folder">
           <div class="folder-header">
             <h2>Google Sheets</h2>
             <p>Shapes, texture, and color studies.</p>
@@ -627,8 +625,15 @@
     // Build folders -> images structure
     const folderEls = [...document.querySelectorAll(".folder")];
     const folders = folderEls.map((f, fi) => {
-      const title = f.dataset.folderTitle || f.querySelector("h2")?.textContent || "";
-      const desc = f.dataset.folderDesc || f.querySelector(".folder-header p")?.textContent || "";
+      const h2 = f.querySelector("h2");
+      const title = h2?.textContent.trim() || "";
+      let desc = "";
+      if (h2) {
+        desc = [...h2.parentElement.children]
+          .filter(el => el !== h2)
+          .map(el => el.textContent.trim())
+          .join(" ");
+      }
       const imgs = [...f.querySelectorAll(".thumb img")].map((img, ii) => ({
         src: img.src,
         alt: img.alt || "",
