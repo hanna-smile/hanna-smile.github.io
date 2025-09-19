@@ -536,14 +536,82 @@
 
       .logo-title {
         display: flex;
-        align-items: center; /* centers vertically */
-        gap: 10px; /* spacing between icon and text */
-        font-size: 2rem; /* adjust as needed */
+        align-items: center;
+        gap: 10px;
+        font-size: 2rem;
       }
 
       .logo-title img {
         width: 32px;
         height: 32px;
+      }
+
+      .intro, .contact {
+        max-width: 1100px;
+        margin: 28px auto;
+        padding: 28px 20px;
+        background: linear-gradient(180deg, #0e1220, #0c1018);
+        border: 1px solid #1f2633;
+        border-radius: 18px;
+        box-shadow:
+          0 6px 18px rgba(0, 0, 0, 0.25),
+          inset 0 1px 0 rgba(255, 255, 255, 0.02);
+      }
+
+      .intro h2, .contact h2 {
+        margin: 0 0 10px;
+        font-size: clamp(20px, 2.4vw, 26px);
+        letter-spacing: 0.2px;
+      }
+
+      .intro p, .contact p {
+        margin: 8px 0 0;
+        color: var(--muted);
+        font-size: 15px;
+      }
+
+      .intro h2::after, .contact h2::after {
+        content: "";
+        display: block;
+        width: 56px;
+        height: 2px;
+        margin-top: 10px;
+        background: linear-gradient(90deg, var(--accent), transparent);
+        border-radius: 2px;
+      }
+
+      @media (min-width: 700px) {
+        .intro, .contact { padding: 32px 24px; }
+      }
+
+      footer {
+        margin-top: 30px;
+        padding: 22px 20px;
+        text-align: center;
+        color: var(--muted);
+        border-top: 1px solid #1f2633;
+        background: rgba(11, 13, 16, 0.55);
+        backdrop-filter: saturate(140%) blur(6px);
+        border-radius: 16px;
+        box-shadow:
+          0 6px 18px rgba(0, 0, 0, 0.25),
+          inset 0 1px 0 rgba(255, 255, 255, 0.02);
+      }
+
+      footer p {
+        margin: 0;
+        font-size: 14px;
+      }
+
+      footer a {
+        color: var(--text);
+        text-decoration: none;
+        border-bottom: 1px dashed rgba(106, 167, 255, 0.45);
+      }
+
+      footer a:hover {
+        color: var(--accent);
+        border-bottom-color: var(--accent);
       }
     </style>
   </head>
@@ -595,6 +663,13 @@
     </header>
 
     <main class="container">
+
+      <section class="intro">
+        <h2>About Me</h2>
+        <p>Hello! I'm Hanna Smile, a content creator and designer with a passion for making English learning fun, interactive, and visually engaging. I create social media campaigns, interactive posts, and digital resources that help learners grow with confidence.</p>
+      </section>
+
+
       <section class="grid" id="gallery">
         <article class="folder">
           <div class="folder-header">
@@ -704,7 +779,16 @@
           </div>
         </article>
       </section>
+
+      <section class="contact">
+        <h2>Let’s Work Together</h2>
+        <p>If you’d like to collaborate on creative content, social media strategies, or educational projects, feel free to connect with me through my social channels above or send me a message directly.</p>
+      </section>      
     </main>
+
+    <footer class="container">
+      <p>&copy; 2025 Hanna Smile. All rights reserved.</p>
+    </footer>
 
     <!-- Lightbox -->
     <div id="lightbox" aria-modal="true" role="dialog" aria-hidden="true">
