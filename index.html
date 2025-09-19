@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hanna Smile Portfolio</title>
+
+    <!-- Basic SEO -->
+    <meta name="description" content="Hanna Smile Portfolio – Creative content designer with experience in educational projects, social media visuals, certificates, and Google Sheets analytics." />
+    <meta name="keywords" content="Hanna Smile, portfolio, content creator, educational content, Canva design, social media visuals, English Language Club, Telegram, Twitter, Google Sheets" />
+    <meta name="author" content="Hanna Smile" />
+
+    <!-- Open Graph (Facebook, LinkedIn) -->
+    <meta property="og:title" content="Hanna Smile Portfolio" />
+    <meta property="og:description" content="Explore my curated works: motivational posts, interactive tasks, certificates, grammar visuals, and data analytics in Google Sheets." />
+    <meta property="og:image" content="portfolio/telegram/01.png" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://your-portfolio-link.com" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Hanna Smile Portfolio" />
+    <meta name="twitter:description" content="Creative educational content and design: posts, visuals, certificates, and data projects." />
+    <meta name="twitter:image" content="portfolio/telegram/01.png" />
+
+    <!-- Favicon -->
+    <link rel="icon" href="favicon.png" type="image/x-icon" />
+    <style>
+      :root {
+        --bg: #0b0d10;
+        --card: #151922;
+        --muted: #9aa3b2;
+        --text: #e8eef9;
+        --accent: #6aa7ff;
+        --ring: rgba(106, 167, 255, 0.35);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+
+      body {
+        margin: 0;
+        background: linear-gradient(180deg, #0b0d10, #0f131a 40%, #0b0d10);
+        color: var(--text);
+        font: 500 16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu,
+          "Helvetica Neue", Arial;
+      }
+
+      header {
+        top: 0;
+        backdrop-filter: saturate(140%) blur(8px);
+        background: rgba(11, 13, 16, 0.6);
+        border-bottom: 1px solid #1f2633;
+      }
+
+      .container {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 28px 20px;
+      }
+
+      h1 {
+        font-size: clamp(24px, 3vw, 34px);
+        margin: 0;
+      }
+
+      header p {
+        margin: 6px 0 0;
+        color: var(--muted);
+      }
+
+      .controls {
+        display: flex;
+        gap: 10px;
+        margin-top: 16px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 18px;
+      }
+
+      .folder {
+        background: linear-gradient(180deg, #0e1220, #0c1018);
+        border: 1px solid #1f2633;
+        border-radius: 18px;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25),
+          inset 0 1px 0 rgba(255, 255, 255, 0.02);
+        overflow: hidden;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .folder:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35),
+          0 0 0 1px rgba(106, 167, 255, 0.1) inset;
+      }
+
+      .folder-header {
+        padding: 16px 16px 8px;
+      }
+
+      .folder-header h2 {
+        margin: 0;
+        font-size: 18px;
+      }
+
+      .folder-header p {
+        margin: 6px 0 0;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .images {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 14px;
+      }
+
+      .thumb {
+        position: relative;
+        cursor: zoom-in;
+        border-radius: 12px;
+        overflow: hidden;
+        aspect-ratio: 4 / 3;
+        flex: 1 1 calc(50% - 10px);
+        background: #0a0d13;
+      }
+
+      .thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: transform 0.25s ease, filter 0.25s ease;
+      }
+
+      .thumb:after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+      }
+
+      .thumb:hover img {
+        transform: scale(1.04);
+        filter: brightness(1.05);
+      }
+
+      /* Lightbox */
+      #lightbox {
+        position: fixed;
+        inset: 0;
+        display: none;
+        place-items: center;
+        background: rgba(8, 10, 14, 0.82);
+        backdrop-filter: blur(6px);
+        z-index: 1000;
+      }
+
+      #lightbox.active {
+        display: grid;
+      }
+
+      .lb-inner {
+        position: relative;
+        width: min(96vw, 1600px);
+        max-height: 88vh;
+        background: linear-gradient(180deg, #0e1220, #0c1018);
+        border: 1px solid #1f2633;
+        border-radius: 10px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55),
+          0 0 0 1px rgba(106, 167, 255, 0.12) inset;
+        overflow: hidden;
+      }
+
+      .lb-media {
+        position: relative;
+        height: 64vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px;
+      }
+
+      .lb-media img {
+        max-width: 100%;
+        max-height: 100%;
+        width: auto;
+        height: auto;
+        object-fit: contain;
+        border-radius: 14px;
+        background: #0a0d13;
+      }
+
+      .lb-meta {
+        display: flex;
+        justify-content: space-between;
+        gap: 14px;
+        align-items: flex-start;
+        padding: 14px 16px 16px;
+      }
+
+      .lb-text {
+        min-width: 0;
+      }
+
+      .lb-title {
+        margin: 0 0 4px;
+        font-size: 18px;
+      }
+
+      .lb-desc {
+        margin: 0;
+        color: var(--muted);
+        font-size: 14px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .lb-controls {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0 auto;
+        justify-content: center;
+      }
+
+      .btn {
+        appearance: none;
+        border: 1px solid #223047;
+        background: #121826;
+        color: var(--text);
+        padding: 10px 12px;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: transform 0.15s ease, background 0.15s ease,
+          border-color 0.15s ease;
+      }
+
+      .btn:hover {
+        background: #182132;
+        border-color: #2a3a56;
+      }
+
+      .btn:active {
+        transform: translateY(1px);
+      }
+
+      .icon {
+        display: inline-block;
+        line-height: 0;
+        font-size: 0;
+      }
+
+      .nav {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+      }
+
+      .nav button {
+        pointer-events: auto;
+        position: absolute;
+        top: 50%;
+        margin-top: -18px;
+
+        width: 36px;
+        height: 36px;
+        padding: 0;
+
+        display: grid;
+        place-items: center;
+
+        border-radius: 8px;
+        border: 1px solid #223047;
+
+        background: rgba(18, 24, 38, 0.6);
+        backdrop-filter: saturate(140%) blur(4px);
+
+        color: var(--text);
+        font-size: 18px;
+        font-weight: 700;
+        cursor: pointer;
+
+        box-shadow:
+          0 4px 12px rgba(0, 0, 0, 0.30),
+          0 0 0 1px rgba(106, 167, 255, 0.08) inset;
+      }
+
+      .nav button:hover {
+        background: rgba(24, 33, 50, 0.85);
+        border-color: #2a3a56;
+      }
+
+      .nav button:focus-visible {
+        outline: none;
+        box-shadow:
+          0 0 0 2px var(--ring),
+          0 0 0 1px #2a3a56 inset;
+      }
+
+      .nav .prev {
+        left: 14px;
+      }
+
+      .nav .next {
+        right: 14px;
+      }
+
+      @media (max-width: 540px) {
+        .lb-meta {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .lb-inner {
+          width: 100vw;
+        }        
+      }
+
+      /* Make first image full width; keep others as 1/2 width */
+      .images .thumb:first-child {
+        flex: 1 0 100%; aspect-ratio: 16/9;
+      }
+
+      /* Hide everything after the first 3 thumbnails (still in DOM for lightbox) */
+      .images .thumb:nth-child(n+4) {
+        display: none;
+      }
+
+      /* Position for the "+N more" button */
+      .images {
+        position: relative;
+      }
+
+      .more {
+        position: absolute;
+        right: 18px;
+        bottom: 18px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        border: 1px solid #223047;
+        background: #121826;
+        color: var(--text);
+        cursor: pointer;
+      }
+
+      .more:hover {
+        background:#182132; border-color:#2a3a56;
+      }
+
+      .lb-strip {
+        display: flex;
+        padding: 10px 0;
+        overflow: auto;
+        border-top: 1px solid #1f2633;
+        background: linear-gradient(180deg, #0e1220, #0c1018);
+        scroll-behavior: smooth;
+      }
+      .lb-strip::before,
+      .lb-strip::after {
+        content: "";
+        flex: 1 0 0;
+      }
+      .lb-strip::-webkit-scrollbar { height: 8px; }
+      .lb-strip img {
+        width: 72px;
+        height: 54px;
+        object-fit: cover;
+        border-radius: 8px;
+        display: block;
+        background: #0a0d13;
+      }
+      .lb-strip .it {
+        appearance: none;
+        border: 1px solid #223047;
+        background: #121826;
+        padding: 3px;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: transform .15s ease, border-color .15s ease;
+      }
+      .lb-strip .it {
+        background: #101622;
+      }
+
+      .lb-strip .it img {
+        opacity: .55;
+        filter: brightness(.7) saturate(.8);
+        transition: opacity .2s ease, filter .2s ease, transform .15s ease;
+      }
+
+      .lb-strip .it:hover img {
+        opacity: .85;
+        filter: brightness(.9) saturate(.95);
+      }
+
+      .lb-strip .it.current {
+        background: #141b2a;
+        box-shadow: 
+          0 0 0 2px var(--ring) inset,
+          0 0 0 1px #2a3a56 inset;
+        border-color: #2a3a56;
+      }
+
+      .lb-strip .it.current img {
+        opacity: 1;
+        filter: none;
+      }
+
+      .lb-strip .it:hover {
+        transform: translateY(-1px);
+        border-color: #2a3a56;
+      }
+
+      .lb-strip .it.current {
+        box-shadow: 0 0 0 2px var(--ring) inset;
+        border-color: #2a3a56;
+      }
+      .lb-strip{
+        scroll-behavior:smooth;
+      }
+
+      /* Close button (smaller version) */
+      #btnClose {
+        position: absolute;
+        top: 12px;
+        right: 10px;
+
+        width: 32px;
+        height: 32px;
+        padding: 0;
+
+        display: grid;
+        place-items: center;
+
+        border-radius: 8px;
+        border: 1px solid #223047;
+
+        background: rgba(18, 24, 38, 0.6);
+        backdrop-filter: saturate(140%) blur(4px);
+
+        color: var(--text);
+
+        box-shadow: 
+          0 4px 12px rgba(0, 0, 0, 0.3),
+          0 0 0 1px rgba(106, 167, 255, 0.08) inset;
+
+        z-index: 2;
+      }
+
+      #btnClose:hover {
+        background: rgba(24, 33, 50, 0.85);
+        border-color: #2a3a56;
+      }
+
+      #btnClose:active {
+        transform: translateY(1px);
+      }
+
+      #btnClose:focus-visible {
+        outline: none;
+        box-shadow: 
+          0 0 0 2px var(--ring),
+          0 0 0 1px #2a3a56 inset;
+      }
+
+      #btnClose .icon {
+        font-size: 14px;
+        line-height: 1;
+      }
+
+      @media (max-width: 740px) {
+        .nav {
+          display: none;
+        }        
+      }
+
+      #lightbox {
+        overscroll-behavior: contain;
+      }
+
+      .lb-media,
+      .lb-inner {
+        touch-action: pan-y;
+      }
+
+      body.no-scroll {
+        position: fixed;
+        overflow: hidden;
+        width: 100%;
+      }
+
+      /* Social (works) links */
+      .social {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 16px;
+      }
+
+      .social-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 12px;
+        border-radius: 12px;
+        border: 1px solid #223047;
+        background: #121826;
+        color: var(--text);
+        text-decoration: none;
+        transition: transform .15s ease, background .15s ease, border-color .15s ease;
+      }
+
+      .social-btn:hover { background:#182132; border-color:#2a3a56; }
+      .social-btn:active { transform: translateY(1px); }
+
+      .social-btn .icon { line-height: 0; }
+      .social-btn .label { font-size: 14px; color: var(--text); white-space: nowrap; }
+
+      @media (max-width: 480px) {
+        .social { gap: 8px; }
+        .social-btn .label { font-size: 13px; }
+      }
+
+      .logo-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 2rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .logo-title img {
+        width: 32px;
+        height: 32px;
+        flex-shrink: 0;
+      }
+
+      @media (max-width: 480px) {
+        .logo-title {
+          font-size: 1.4rem;
+          gap: 8px;
+        }
+
+        .logo-title img {
+          width: 28px;
+          height: 28px;
+        }
+      }
+
+      .intro, .contact {
+        max-width: 1100px;
+        margin: 28px auto;
+        padding: 28px 20px;
+        background: linear-gradient(180deg, #0e1220, #0c1018);
+        border: 1px solid #1f2633;
+        border-radius: 18px;
+        box-shadow:
+          0 6px 18px rgba(0, 0, 0, 0.25),
+          inset 0 1px 0 rgba(255, 255, 255, 0.02);
+      }
+
+      .intro h2, .contact h2 {
+        margin: 0 0 10px;
+        font-size: clamp(20px, 2.4vw, 26px);
+        letter-spacing: 0.2px;
+      }
+
+      .intro p, .contact p {
+        margin: 8px 0 0;
+        color: var(--muted);
+        font-size: 15px;
+      }
+
+      .intro h2::after, .contact h2::after {
+        content: "";
+        display: block;
+        width: 56px;
+        height: 2px;
+        margin-top: 10px;
+        background: linear-gradient(90deg, var(--accent), transparent);
+        border-radius: 2px;
+      }
+
+      @media (min-width: 700px) {
+        .intro, .contact { padding: 32px 24px; }
+      }
+
+      footer {
+        margin-top: 30px;
+        padding: 22px 20px;
+        text-align: center;
+        color: var(--muted);
+        border-top: 1px solid #1f2633;
+        background: rgba(11, 13, 16, 0.55);
+        backdrop-filter: saturate(140%) blur(6px);
+        border-radius: 16px;
+        box-shadow:
+          0 6px 18px rgba(0, 0, 0, 0.25),
+          inset 0 1px 0 rgba(255, 255, 255, 0.02);
+      }
+
+      footer p {
+        margin: 0;
+        font-size: 14px;
+      }
+
+      footer a {
+        color: var(--text);
+        text-decoration: none;
+        border-bottom: 1px dashed rgba(106, 167, 255, 0.45);
+      }
+
+      footer a:hover {
+        color: var(--accent);
+        border-bottom-color: var(--accent);
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <div class="container">
+        <h1 class="logo-title">
+          <img src="favicon.png" alt="HS logo" />
+          Hanna Smile Portfolio
+        </h1>
+        <p>Curated collections from my work</p>
+      </div>
+    </header>
+
+    <main class="container">
+
+      <section class="intro">
+        <h2>About Me</h2>
+        <p>Hello! I'm Hanna Smile, a content creator and designer with a passion for making English learning fun, interactive, and visually engaging. I create social media campaigns, interactive posts, and digital resources that help learners grow with confidence.</p>
+      </section>
+
+      <section class="intro">
+        <h2 class="works-heading">Find my works:</h2>
+        <nav class="social" aria-label="My works">
+          <a class="social-btn" href="https://www.instagram.com/englishlanguage.club" target="_blank" rel="noopener noreferrer" aria-label="Instagram: englishlanguage.club">
+            <span class="icon" aria-hidden="true">
+              <!-- Instagram -->
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                <rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.6"></rect>
+                <circle cx="12" cy="12" r="3.8" stroke="currentColor" stroke-width="1.6"></circle>
+                <circle cx="17.5" cy="6.5" r="1.2" fill="currentColor"></circle>
+              </svg>
+            </span>
+            <span class="label">@englishlanguage.club</span>
+          </a>
+
+          <a class="social-btn" href="https://x.com/Englishlangvage" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter): Englishlangvage">
+            <span class="icon" aria-hidden="true">
+              <!-- X icon: two crossed lines -->
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M4 4L20 20M20 4L4 20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+              </svg>
+            </span>
+            <span class="label">@Englishlangvage</span>
+          </a>
+
+          <a class="social-btn" href="http://t.me/englishlanguagetelegram" target="_blank" rel="noopener noreferrer" aria-label="Telegram: englishlanguagetelegram">
+            <span class="icon" aria-hidden="true">
+              <!-- Telegram -->
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                <path d="M21 5.5l-3.9 14a1 1 0 0 1-1.6.5L10 16l-2.5 2.3a.7.7 0 0 1-1.2-.4l.4-3.8 10.8-8.2a.4.4 0 0 0-.5-.6L5.6 12 3.5 11.3a1 1 0 0 1 .1-1.9l16-5.4a1 1 0 0 1 1.4 1.4z" fill="currentColor"></path>
+              </svg>
+            </span>
+            <span class="label">@englishlanguagetelegram</span>
+          </a>
+        </nav>  
+      </section>
+
+      <section class="grid" id="gallery">
+        <article class="folder">
+          <div class="folder-header">
+            <h2>Day Quotes</h2>
+            <p>Motivational posts with quotes designed in Canva for English Language Club. Aimed at boosting engagement and inspiring learners.</p>
+          </div>
+
+          <div class="images">
+            <a class="thumb"><img src="portfolio/quotes/01.png" /></a>
+            <a class="thumb"><img src="portfolio/quotes/02.png" /></a>
+            <a class="thumb"><img src="portfolio/quotes/03.png" /></a>
+            <a class="thumb"><img src="portfolio/quotes/04.png" /></a>
+            <a class="thumb"><img src="portfolio/quotes/05.png" /></a>
+            <a class="thumb"><img src="portfolio/quotes/06.png" /></a>
+            <a class="thumb"><img src="portfolio/quotes/07.png" /></a>
+            <a class="thumb"><img src="portfolio/quotes/08.png" /></a>
+            <a class="thumb"><img src="portfolio/quotes/09.png" /></a>
+            <a class="thumb"><img src="portfolio/quotes/10.png" /></a>
+            <a class="thumb"><img src="portfolio/quotes/11.png" /></a>
+          </div>
+        </article>
+
+        <article class="folder">
+          <div class="folder-header">
+            <h2>Telegram</h2>
+            <p>Interactive posts, learning tasks, and community visuals for Telegram channel moderation. Includes quizzes, games, and announcements.</p>
+          </div>
+
+          <div class="images">
+            <a class="thumb"><img src="portfolio/telegram/01.png" /></a>
+            <a class="thumb"><img src="portfolio/telegram/02.png" /></a>
+            <a class="thumb"><img src="portfolio/telegram/03.png" /></a>
+            <a class="thumb"><img src="portfolio/telegram/04.png" /></a>
+            <a class="thumb"><img src="portfolio/telegram/05.png" /></a>
+            <a class="thumb"><img src="portfolio/telegram/06.png" /></a>
+            <a class="thumb"><img src="portfolio/telegram/07.png" /></a>
+            <a class="thumb"><img src="portfolio/telegram/08.png" /></a>
+            <a class="thumb"><img src="portfolio/telegram/09.png" /></a>
+            <a class="thumb"><img src="portfolio/telegram/10.png" /></a>
+            <a class="thumb"><img src="portfolio/telegram/11.png" /></a>
+            <a class="thumb"><img src="portfolio/telegram/12.png" /></a>
+            <a class="thumb"><img src="portfolio/telegram/13.png" /></a>
+            <a class="thumb"><img src="portfolio/telegram/14.png" /></a>
+            <a class="thumb"><img src="portfolio/telegram/15.png" /></a>
+            <a class="thumb"><img src="portfolio/telegram/16.png" /></a>
+            <a class="thumb"><img src="portfolio/telegram/17.png" /></a>
+            <a class="thumb"><img src="portfolio/telegram/18.png" /></a>
+          </div>
+        </article>
+
+        <article class="folder">
+          <div class="folder-header">
+            <h2>Twitter</h2>
+            <p>Grammar tips and visual explanations tailored for social media. Clear, minimalistic posts to make English rules accessible.</p>
+          </div>
+
+          <div class="images">
+            <a class="thumb"><img src="portfolio/twitter/01.png" /></a>
+            <a class="thumb"><img src="portfolio/twitter/02.png" /></a>
+            <a class="thumb"><img src="portfolio/twitter/03.png" /></a>
+          </div>
+        </article>
+
+        <article class="folder">
+          <div class="folder-header">
+            <h2>Certificates</h2>
+            <p>Official certificates designed for the English Language Club to reward moderators and boost team motivation.</p>
+          </div>
+
+          <div class="images">
+            <a class="thumb"><img src="portfolio/certificates/01.png" /></a>
+            <a class="thumb"><img src="portfolio/certificates/02.png" /></a>
+            <a class="thumb"><img src="portfolio/certificates/03.png" /></a>
+          </div>
+        </article>
+
+        <article class="folder">
+          <div class="folder-header">
+            <h2>English Club</h2>
+            <p>Educational posts, series on grammar, homonyms, slang, and speaking practice. Focused on interactive, visual learning.</p>
+          </div>
+
+          <div class="images">
+            <a class="thumb"><img src="portfolio/english-club/01.png" /></a>
+            <a class="thumb"><img src="portfolio/english-club/02.png" /></a>
+            <a class="thumb"><img src="portfolio/english-club/03.png" /></a>
+            <a class="thumb"><img src="portfolio/english-club/04.png" /></a>
+            <a class="thumb"><img src="portfolio/english-club/05.png" /></a>
+            <a class="thumb"><img src="portfolio/english-club/06.png" /></a>
+            <a class="thumb"><img src="portfolio/english-club/07.png" /></a>
+            <a class="thumb"><img src="portfolio/english-club/08.png" /></a>
+            <a class="thumb"><img src="portfolio/english-club/09.png" /></a>
+            <a class="thumb"><img src="portfolio/english-club/10.png" /></a>
+          </div>
+        </article>
+
+        <article class="folder">
+          <div class="folder-header">
+            <h2>Google Sheets</h2>
+            <p>Custom spreadsheets for analytics, time tracking, and team scheduling. Automated with formulas and clear formatting.</p>
+          </div>
+
+          <div class="images">
+            <a class="thumb"><img src="portfolio/google-sheets/01.png" /></a>
+            <a class="thumb"><img src="portfolio/google-sheets/02.png" /></a>
+            <a class="thumb"><img src="portfolio/google-sheets/03.png" /></a>
+          </div>
+        </article>
+      </section>
+
+      <section class="contact">
+        <h2>Let’s Work Together</h2>
+        <p>If you’d like to collaborate on creative content, social media strategies, or educational projects, feel free to connect with me through my social channels above or send me a message directly.</p>
+      </section>      
+    </main>
+
+    <footer class="container">
+      <p>&copy; 2025 Hanna Smile. All rights reserved.</p>
+    </footer>
+
+    <!-- Lightbox -->
+    <div id="lightbox" aria-modal="true" role="dialog" aria-hidden="true">
+      <div class="lb-inner">
+        <button type="button" class="btn close" id="btnClose" aria-label="Close">
+          <span class="icon">✕</span>
+        </button>
+
+        <div class="lb-meta">
+          <div class="lb-text">
+            <h3 class="lb-title" id="lbTitle"></h3>
+            <p class="lb-desc" id="lbDesc"></p>
+          </div>
+        </div>
+
+        <div class="lb-media">
+          <img id="lbImg" alt="" />
+        </div>
+
+        <div class="nav">
+          <button class="prev btn" id="btnPrev" aria-label="Previous">&lt;</button>
+          <button class="next btn" id="btnNext" aria-label="Next">&gt;</button>
+        </div>
+
+        <div class="lb-strip" id="lbStrip"></div>        
+      </div>
+    </div>
+
+    <script>
+      // Build folders -> images structure
+      const folderEls = [...document.querySelectorAll(".folder")];
+      const folders = folderEls.map((f, fi) => {
+        const h2 = f.querySelector("h2");
+        const title = h2?.textContent.trim() || "";
+        let desc = "";
+        if (h2) {
+          desc = [...h2.parentElement.children]
+            .filter(el => el !== h2)
+            .map(el => el.textContent.trim())
+            .join(" ");
+        }
+        const imgs = [...f.querySelectorAll(".thumb img")].map((img, ii) => ({
+          src: img.src,
+          alt: img.alt || "",
+          fi,
+          ii
+        }));
+        return { el: f, title, desc, imgs };
+      });
+
+      // Lightbox state (folder index + image index within that folder)
+      let cFolder = -1;
+      let cIndex  = -1;
+
+      const lb   = document.getElementById("lightbox");
+      const img  = document.getElementById("lbImg");
+      const t    = document.getElementById("lbTitle");
+      const d    = document.getElementById("lbDesc");
+      const strip = document.getElementById("lbStrip");
+
+      const prev = () => go(-1);
+      const next = () => go(1);
+
+      function openAt(fi, ii) {
+        if (fi < 0 || fi >= folders.length) return;
+        const folder = folders[fi];
+        if (ii < 0 || ii >= folder.imgs.length) return;
+
+        const folderChanged = fi !== cFolder;
+
+        cFolder = fi;
+        cIndex  = ii;
+
+        const it = folder.imgs[cIndex];
+        img.src = it.src;
+        img.alt = it.alt;
+
+        if (folderChanged) {
+          t.textContent = folder.title;
+          d.textContent = folder.desc;
+        }
+
+        renderStrip(cFolder, cIndex); // rebuild only if folder changed; otherwise just update selection
+
+        lb.classList.add("active");
+        lb.setAttribute("aria-hidden", "false");
+        history.pushState({ lb: true, fi: cFolder, ii: cIndex }, "", "#");
+
+        focusThumb();
+      }
+
+
+      // Move within folder; if out of bounds, hop to previous/next folder and wrap to end/start
+      function go(step) {
+        if (cFolder < 0 || cIndex < 0) return;
+
+        let fi = cFolder;
+        let ii = cIndex + step;
+
+        if (ii < 0) {
+          fi = (fi - 1 + folders.length) % folders.length;
+          ii = folders[fi].imgs.length - 1;
+        } else if (ii >= folders[fi].imgs.length) {
+          fi = (fi + 1) % folders.length;
+          ii = 0;
+        }
+
+        const folderChanged = fi !== cFolder;
+
+        cFolder = fi;
+        cIndex  = ii;
+
+        const folder = folders[cFolder];
+        const it = folder.imgs[cIndex];
+
+        img.src = it.src;
+        img.alt = it.alt;
+
+        if (folderChanged) {
+          t.textContent = folder.title;
+          d.textContent = folder.desc;
+        }
+
+        renderStrip(cFolder, cIndex); // rebuild only if folder changed; otherwise just update selection
+
+        focusThumb();
+      }
+
+
+      function closeLb() {
+        lb.classList.remove("active");
+        lb.setAttribute("aria-hidden", "true");
+        img.src = "";
+        if (location.hash === "#") {
+          history.back();
+        }
+      }
+
+      // Buttons & basic interactions
+      document.getElementById("btnPrev").onclick = prev;
+      document.getElementById("btnNext").onclick = next;
+      document.getElementById("btnClose").onclick = closeLb;
+
+      lb.addEventListener("click", (e) => {
+        if (e.target === lb) closeLb();
+      });
+
+      addEventListener("keydown", (e) => {
+        if (!lb.classList.contains("active")) return;
+        if (e.key === "Escape") closeLb();
+        else if (e.key === "ArrowLeft") prev();
+        else if (e.key === "ArrowRight") next();
+      });
+
+      history.pushState?.({ lb: true, fi: cFolder, ii: cIndex }, "", "#");
+
+      // Clicks on visible thumbs (per folder)
+      folderEls.forEach((fEl, fi) => {
+        const anchors = [...fEl.querySelectorAll(".thumb")];
+        anchors.forEach((a, ii) => {
+          a.addEventListener("click", (e) => {
+            e.preventDefault();
+            openAt(fi, ii);
+          });
+        });
+      });
+
+      // "+N more" per folder opens first hidden (index 3)
+      document.querySelectorAll(".folder").forEach((fEl, fi) => {
+        const imgs = [...fEl.querySelectorAll(".thumb")];
+        const extra = Math.max(0, imgs.length - 3);
+        if (extra > 0) {
+          const btn = document.createElement("button");
+          btn.className = "more";
+          btn.type = "button";
+          btn.textContent = `+${extra} more`;
+          fEl.querySelector(".images").appendChild(btn);
+          btn.addEventListener("click", () => {
+            const firstHiddenIndex = 3;
+            if (imgs[firstHiddenIndex]) openAt(fi, firstHiddenIndex);
+          });
+        }
+      });
+
+      // History back closes lightbox
+      addEventListener("popstate", (e) => {
+        if (!e.state || !e.state.lb) closeLb();
+      });
+
+      // Thumbnail strip (current folder only)
+      function renderStrip(fi, sel = -1) {
+        const folder = folders[fi];
+        strip.innerHTML = folder.imgs.map((it, i) =>
+          `<button class="it${i === sel ? " current" : ""}" data-i="${i}" title="${it.alt || folder.title}">
+            <img src="${it.src}" alt="">
+          </button>`
+        ).join("");
+      }
+
+      strip.addEventListener("click", (e) => {
+        const b = e.target.closest(".it");
+        if (!b) return;
+        const i = parseInt(b.dataset.i, 10);
+        if (!Number.isNaN(i)) openAt(cFolder, i);
+      });
+
+      function focusThumb() {
+        const b = strip.children[cIndex];
+        if (!b) return;
+        b.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" });
+      }
+
+      // Touch swipe (left/right)
+      const media = document.querySelector(".lb-media");
+      let startX = 0, startY = 0, deltaX = 0, deltaY = 0, touching = false;
+      const THRESHOLD = 40;
+
+      media.addEventListener("touchstart", (e) => {
+        if (!lb.classList.contains("active")) return;
+        const t = e.changedTouches[0];
+        startX = t.clientX;
+        startY = t.clientY;
+        deltaX = 0;
+        deltaY = 0;
+        touching = true;
+      }, { passive: true });
+
+      media.addEventListener("touchmove", (e) => {
+        if (!touching) return;
+        const t = e.changedTouches[0];
+        deltaX = t.clientX - startX;
+        deltaY = t.clientY - startY;
+      }, { passive: true });
+
+      media.addEventListener("touchend", () => {
+        if (!touching) return;
+        touching = false;
+        if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > THRESHOLD) {
+          if (deltaX < 0) next(); else prev();
+        }
+        deltaX = 0; deltaY = 0;
+      }, { passive: true });
+
+      let stripFolder = -1;
+
+      function renderStrip(fi, sel = -1) {
+        if (stripFolder !== fi) {
+          const folder = folders[fi];
+          strip.innerHTML = folder.imgs.map((it, i) =>
+            `<button class="it" data-i="${i}" title="${it.alt || folder.title}">
+              <img src="${it.src}" alt="">
+            </button>`
+          ).join("");
+          stripFolder = fi;
+        }
+        setCurrentThumb(sel);
+      }
+
+      function setCurrentThumb(sel) {
+        [...strip.children].forEach((b, j) => b.classList.toggle("current", j === sel));
+      }
+    </script>
+  </body>
+</html>
