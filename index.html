@@ -865,6 +865,8 @@
       const d    = document.getElementById("lbDesc");
       const strip = document.getElementById("lbStrip");
 
+      history.replaceState({ lb: false }, "", location.pathname + location.search);
+
       const prev = () => go(-1);
       const next = () => go(1);
 
@@ -891,7 +893,7 @@
 
         lb.classList.add("active");
         lb.setAttribute("aria-hidden", "false");
-        history.pushState({ lb: true, fi: cFolder, ii: cIndex }, "", "#");
+        history.pushState({ lb: true, fi: cFolder, ii: cIndex }, "", location.pathname + location.search);
 
         focusThumb();
       }
@@ -938,9 +940,7 @@
         lb.classList.remove("active");
         lb.setAttribute("aria-hidden", "true");
         img.src = "";
-        if (location.hash === "#") {
-          history.back();
-        }
+        history.replaceState({ lb: false }, "", location.pathname + location.search);
       }
 
       // Buttons & basic interactions
@@ -958,8 +958,6 @@
         else if (e.key === "ArrowLeft") prev();
         else if (e.key === "ArrowRight") next();
       });
-
-      history.pushState?.({ lb: true, fi: cFolder, ii: cIndex }, "", "#");
 
       // Clicks on visible thumbs (per folder)
       folderEls.forEach((fEl, fi) => {
