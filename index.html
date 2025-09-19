@@ -336,7 +336,8 @@
 
       .lb-strip {
         display: flex;
-        gap: 0px;
+        justify-content: center;
+        gap: 6px;
         padding: 10px 0;
         overflow: auto;
         border-top: 1px solid #1f2633;
@@ -598,7 +599,7 @@
     <!-- Lightbox -->
     <div id="lightbox" aria-modal="true" role="dialog" aria-hidden="true">
       <div class="lb-inner">
-        <button class="btn close" id="btnClose" aria-label="Close">
+        <button type="button" class="btn close" id="btnClose" aria-label="Close">
           <span class="icon">✕</span>
         </button>
 
@@ -622,212 +623,189 @@
       </div>
     </div>
 
-    <script>
-      // Build a flat list of images with folder metadata
-      const thumbs = [...document.querySelectorAll(".folder")].flatMap((f) =>
-        [...f.querySelectorAll(".thumb img")].map((img) => ({
-          src: img.src,
-          alt: img.alt,
-          folder: f,
-          ft: f.dataset.folderTitle,
-          fd: f.dataset.folderDesc,
-        }))
-      );
+  <script>
+    // Build folders -> images structure
+    const folderEls = [...document.querySelectorAll(".folder")];
+    const folders = folderEls.map((f, fi) => {
+      const title = f.dataset.folderTitle || f.querySelector("h2")?.textContent || "";
+      const desc = f.dataset.folderDesc || f.querySelector(".folder-header p")?.textContent || "";
+      const imgs = [...f.querySelectorAll(".thumb img")].map((img, ii) => ({
+        src: img.src,
+        alt: img.alt || "",
+        fi,
+        ii
+      }));
+      return { el: f, title, desc, imgs };
+    });
 
-      let idx = -1;
+    // Lightbox state (folder index + image index within that folder)
+    let cFolder = -1;
+    let cIndex  = -1;
 
-      const lb = document.getElementById("lightbox"),
-        img = document.getElementById("lbImg"),
-        t = document.getElementById("lbTitle"),
-        d = document.getElementById("lbDesc"),
-        prev = () => go(idx - 1),
-        next = () => go(idx + 1);
+    const lb   = document.getElementById("lightbox");
+    const img  = document.getElementById("lbImg");
+    const t    = document.getElementById("lbTitle");
+    const d    = document.getElementById("lbDesc");
+    const strip = document.getElementById("lbStrip");
 
-        function openAt(i) {
-          if (i < 0 || i >= thumbs.length) {
-            return;
-          }
+    const prev = () => go(-1);
+    const next = () => go(1);
 
-          idx = i;
-          const it = thumbs[idx];
+    function openAt(fi, ii) {
+      if (fi < 0 || fi >= folders.length) return;
+      const folder = folders[fi];
+      if (ii < 0 || ii >= folder.imgs.length) return;
 
-          img.src = it.src;
-          img.alt = it.alt || "";
-          t.textContent = it.ft || "";
-          d.textContent = it.fd || "";
+      cFolder = fi;
+      cIndex  = ii;
 
-          lb.classList.add("active");
-          lb.setAttribute("aria-hidden", "false");
+      const it = folder.imgs[cIndex];
+      img.src  = it.src;
+      img.alt  = it.alt;
+      t.textContent = folder.title;
+      d.textContent = folder.desc;
 
-          history.pushState({ lb: true, index: idx }, "", "#");
+      // Show only current folder's strip
+      renderStrip(cFolder, cIndex);
 
-          [...strip.children].forEach((b, j) => {
-            b.classList.toggle("current", j === idx);
-          });
+      lb.classList.add("active");
+      lb.setAttribute("aria-hidden", "false");
+      history.pushState({ lb: true, fi: cFolder, ii: cIndex }, "", "#");
 
-          focusThumb();
-        }
+      focusThumb();
+    }
 
+    // Move within folder; if out of bounds, hop to previous/next folder and wrap to end/start
+    function go(step) {
+      if (cFolder < 0 || cIndex < 0) return;
+      let fi = cFolder;
+      let ii = cIndex + step;
 
-        function go(i) {
-          if (thumbs.length === 0) {
-            return;
-          }
+      if (ii < 0) {
+        fi = (fi - 1 + folders.length) % folders.length;
+        ii = folders[fi].imgs.length - 1;
+      } else if (ii >= folders[fi].imgs.length) {
+        fi = (fi + 1) % folders.length;
+        ii = 0;
+      }
 
-          idx = (i + thumbs.length) % thumbs.length;
-          const it = thumbs[idx];
+      openAt(fi, ii);
+    }
 
-          img.src = it.src;
-          img.alt = it.alt || "";
-          t.textContent = it.ft || "";
-          d.textContent = it.fd || "";
+    function closeLb() {
+      lb.classList.remove("active");
+      lb.setAttribute("aria-hidden", "true");
+      img.src = "";
+      if (location.hash === "#") {
+        history.back();
+      }
+    }
 
-          [...strip.children].forEach((b, j) => {
-            b.classList.toggle("current", j === idx);
-          });
+    // Buttons & basic interactions
+    document.getElementById("btnPrev").onclick = prev;
+    document.getElementById("btnNext").onclick = next;
+    document.getElementById("btnClose").onclick = closeLb;
 
-          focusThumb();
-        }
+    lb.addEventListener("click", (e) => {
+      if (e.target === lb) closeLb();
+    });
 
+    addEventListener("keydown", (e) => {
+      if (!lb.classList.contains("active")) return;
+      if (e.key === "Escape") closeLb();
+      else if (e.key === "ArrowLeft") prev();
+      else if (e.key === "ArrowRight") next();
+    });
 
+    history.pushState?.({ lb: true, fi: cFolder, ii: cIndex }, "", "#");
 
-        function closeLb() {
-          lb.classList.remove("active");
-          lb.setAttribute("aria-hidden", "true");
-          img.src = "";
-          if (location.hash === "#") {
-            history.back();
-          }
-        }
-
-        document.getElementById("btnPrev").onclick = prev;
-        document.getElementById("btnNext").onclick = next;
-        document.getElementById("btnClose").onclick = closeLb;
-
-        lb.addEventListener("click", (e) => {
-          if (e.target === lb) {
-            closeLb();
-          }
+    // Clicks on visible thumbs (per folder)
+    folderEls.forEach((fEl, fi) => {
+      const anchors = [...fEl.querySelectorAll(".thumb")];
+      anchors.forEach((a, ii) => {
+        a.addEventListener("click", (e) => {
+          e.preventDefault();
+          openAt(fi, ii);
         });
+      });
+    });
 
-        addEventListener("keydown", (e) => {
-          if (!lb.classList.contains("active")) {
-            return;
-          }
-          if (e.key === "Escape") {
-            closeLb();
-          } else if (e.key === "ArrowLeft") {
-            prev();
-          } else if (e.key === "ArrowRight") {
-            next();
-          }
+    // "+N more" per folder opens first hidden (index 3)
+    document.querySelectorAll(".folder").forEach((fEl, fi) => {
+      const imgs = [...fEl.querySelectorAll(".thumb")];
+      const extra = Math.max(0, imgs.length - 3);
+      if (extra > 0) {
+        const btn = document.createElement("button");
+        btn.className = "more";
+        btn.type = "button";
+        btn.textContent = `+${extra} more`;
+        fEl.querySelector(".images").appendChild(btn);
+        btn.addEventListener("click", () => {
+          const firstHiddenIndex = 3;
+          if (imgs[firstHiddenIndex]) openAt(fi, firstHiddenIndex);
         });
+      }
+    });
 
-        history.pushState?.({ lb: true, index: idx }, "", "#");
+    // History back closes lightbox
+    addEventListener("popstate", (e) => {
+      if (!e.state || !e.state.lb) closeLb();
+    });
 
-        const allThumbEls=[...document.querySelectorAll(".thumb")]; allThumbEls.forEach((a,i)=>a.addEventListener("click",(e)=>{e.preventDefault();openAt(i);}));
-        document.querySelectorAll(".folder").forEach(f=>{
-          const imgs=[...f.querySelectorAll(".thumb")], extra=Math.max(0,imgs.length-3);
-          if(extra>0){
-            const btn=document.createElement("button");
-            btn.className="more";
-            btn.type="button";
-            btn.textContent=`+${extra} more`;
-            f.querySelector(".images").appendChild(btn);
-            btn.addEventListener("click",()=>{
-              const firstHidden=imgs[3];
-              if(!firstHidden) return;
-              const gi=allThumbEls.indexOf(firstHidden);
-              if(gi>-1) openAt(gi);
-            });
-          }
-        });
+    // Thumbnail strip (current folder only)
+    function renderStrip(fi, sel = -1) {
+      const folder = folders[fi];
+      strip.innerHTML = folder.imgs.map((it, i) =>
+        `<button class="it${i === sel ? " current" : ""}" data-i="${i}" title="${it.alt || folder.title}">
+          <img src="${it.src}" alt="">
+        </button>`
+      ).join("");
+    }
 
-        addEventListener("popstate", (e) => {
-          if (!e.state || !e.state.lb) {
-            closeLb();
-          }
-        });
+    strip.addEventListener("click", (e) => {
+      const b = e.target.closest(".it");
+      if (!b) return;
+      const i = parseInt(b.dataset.i, 10);
+      if (!Number.isNaN(i)) openAt(cFolder, i);
+    });
 
+    function focusThumb() {
+      const b = strip.children[cIndex];
+      if (!b) return;
+      b.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" });
+    }
 
-        const strip = document.getElementById("lbStrip");
+    // Touch swipe (left/right)
+    const media = document.querySelector(".lb-media");
+    let startX = 0, startY = 0, deltaX = 0, deltaY = 0, touching = false;
+    const THRESHOLD = 40;
 
-        function renderStrip(sel = -1) {
-          strip.innerHTML = thumbs.map((it, i) =>
-            `<button class="it${i===sel ? ' current' : ''}" data-i="${i}" title="${it.alt || it.ft || ''}">
-               <img src="${it.src}" alt="">
-             </button>`
-          ).join('');
-        }
-        renderStrip();
+    media.addEventListener("touchstart", (e) => {
+      if (!lb.classList.contains("active")) return;
+      const t = e.changedTouches[0];
+      startX = t.clientX;
+      startY = t.clientY;
+      deltaX = 0;
+      deltaY = 0;
+      touching = true;
+    }, { passive: true });
 
-        strip.addEventListener("click", (e) => {
-          const b = e.target.closest(".it");
-          if (b) { openAt(parseInt(b.dataset.i, 10)); }
-        });
+    media.addEventListener("touchmove", (e) => {
+      if (!touching) return;
+      const t = e.changedTouches[0];
+      deltaX = t.clientX - startX;
+      deltaY = t.clientY - startY;
+    }, { passive: true });
 
-        function focusThumb() {
-          const b = strip.children[idx];
-          if (!b) {
-            return;
-          }
-          b.scrollIntoView({
-            block: "nearest",
-            inline: "center",
-            behavior: "smooth"
-          });
-        }
+    media.addEventListener("touchend", () => {
+      if (!touching) return;
+      touching = false;
+      if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > THRESHOLD) {
+        if (deltaX < 0) next(); else prev();
+      }
+      deltaX = 0; deltaY = 0;
+    }, { passive: true });
+  </script>
 
-        const media = document.querySelector(".lb-media");
-        let startX = 0;
-        let startY = 0;
-        let deltaX = 0;
-        let deltaY = 0;
-        let touching = false;
-        const THRESHOLD = 40; // min distance in px
-
-        media.addEventListener("touchstart", e => {
-          if (!lb.classList.contains("active")) {
-            return;
-          }
-
-          const t = e.changedTouches[0];
-          startX = t.clientX;
-          startY = t.clientY;
-          deltaX = 0;
-          deltaY = 0;
-          touching = true;
-        }, { passive: true });
-
-        media.addEventListener("touchmove", e => {
-          if (!touching) {
-            return;
-          }
-
-          const t = e.changedTouches[0];
-          deltaX = t.clientX - startX;
-          deltaY = t.clientY - startY;
-        }, { passive: true });
-
-        media.addEventListener("touchend", e => {
-          if (!touching) {
-            return;
-          }
-
-          touching = false;
-
-          // horizontal swipe detection
-          if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > THRESHOLD) {
-            if (deltaX < 0) {
-              next(); // swipe left → next
-            } else {
-              prev(); // swipe right → prev
-            }
-          }
-
-          deltaX = 0;
-          deltaY = 0;
-        }, { passive: true });
-    </script>
   </body>
 </html>
