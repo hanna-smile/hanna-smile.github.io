@@ -538,11 +538,27 @@
         align-items: center;
         gap: 10px;
         font-size: 2rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
       .logo-title img {
         width: 32px;
         height: 32px;
+        flex-shrink: 0;
+      }
+
+      @media (max-width: 480px) {
+        .logo-title {
+          font-size: 1.4rem;
+          gap: 8px;
+        }
+
+        .logo-title img {
+          width: 28px;
+          height: 28px;
+        }
       }
 
       .intro, .contact {
